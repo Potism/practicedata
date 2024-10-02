@@ -1,7 +1,9 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
-const port = 9000;
+const port = process.env.PORT || 9000;
 
+app.use(cors());
 app.use(express.json());
 
 // Enhanced in-memory data store
@@ -53,8 +55,13 @@ let users = [
   },
 ];
 
+// Root route for health check
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
+
 // Get all users
-app.get("/users", (req, res) => {
+app.get("/api/users", (req, res) => {
   let result = [...users];
 
   // Filtering
@@ -99,14 +106,14 @@ app.get("/users", (req, res) => {
 });
 
 // Get a specific user by ID
-app.get("/users/:id", (req, res) => {
+app.get("/api/users/:id", (req, res) => {
   const user = users.find((u) => u.id === parseInt(req.params.id));
   if (!user) return res.status(404).send("User not found");
   res.json(user);
 });
 
 // Create a new user
-app.post("/users", (req, res) => {
+app.post("/api/users", (req, res) => {
   const newUser = {
     id: users.length + 1,
     name: req.body.name,
@@ -121,7 +128,7 @@ app.post("/users", (req, res) => {
 });
 
 // Update a user
-app.put("/users/:id", (req, res) => {
+app.put("/api/users/:id", (req, res) => {
   const user = users.find((u) => u.id === parseInt(req.params.id));
   if (!user) return res.status(404).send("User not found");
 
@@ -137,7 +144,7 @@ app.put("/users/:id", (req, res) => {
 });
 
 // Delete a user
-app.delete("/users/:id", (req, res) => {
+app.delete("/api/users/:id", (req, res) => {
   const index = users.findIndex((u) => u.id === parseInt(req.params.id));
   if (index === -1) return res.status(404).send("User not found");
 
@@ -146,7 +153,7 @@ app.delete("/users/:id", (req, res) => {
 });
 
 // Get user statistics
-app.get("/users/stats", (req, res) => {
+app.get("/api/users/stats", (req, res) => {
   const stats = {
     totalUsers: users.length,
     activeUsers: users.filter((u) => u.isActive).length,
