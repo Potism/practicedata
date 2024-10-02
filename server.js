@@ -53,7 +53,7 @@ let users = [
   },
 ];
 
-// Get all users with optional filtering and sorting
+// Get all users
 app.get("/users", (req, res) => {
   let result = [...users];
 
